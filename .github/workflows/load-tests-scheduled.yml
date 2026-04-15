@@ -1,0 +1,60 @@
+name: Load Tests Scheduled
+
+on:
+  schedule:
+    # 15:00 (3 PM UTC) - Brasil: 6 PM UTC anterior = 18 UTC
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  load-tests:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: https://jsonplaceholder.typicode.com
+      NODE_ENV: test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Instalar dependências
+      run: npm install
+
+    - name: Instalar K6
+      uses: grafana/setup-k6-action@v1
+
+    # Load Tests
+    - name: Executar Load Tests (500 VUs)
+      run: npm run test:load:500vu
+      continue-on-error: true
+
+    - name: Converter K6 para Allure
+      if: always()
+      run: npm run k6:convert
+      continue-on-error: true
+
+    - name: Gerar Allure Report
+      if: always()
+      run: npm run test:allure:generate
+
+    - name: Deploy Allure Report - Load Tests
+      if: always() && github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        destination_dir: ./load-tests
+
+    - name: Load Tests Concluído
+      if: always()
+      run: echo "Load Tests completado em https://JaderTS.github.io/test-automation-desafio-outsera/load-tests/"

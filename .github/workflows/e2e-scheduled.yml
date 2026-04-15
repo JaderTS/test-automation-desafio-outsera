@@ -1,0 +1,66 @@
+name: E2E Tests Scheduled
+
+on:
+  schedule:
+    # 12:00 PM UTC (Brasil: 3 PM UTC anterior = 15 UTC)
+    - cron: '0 15 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      VALID_USERNAME: ${{ secrets.VALID_USERNAME }}
+      VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
+      FIRST_NAME: ${{ secrets.FIRST_NAME }}
+      LAST_NAME: ${{ secrets.LAST_NAME }}
+      ZIP_CODE: ${{ secrets.ZIP_CODE }}
+      HEADLESS: true
+      NODE_ENV: test
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Instalar dependências
+      run: npm install
+
+    - name: Instalar Playwright browsers
+      run: npx playwright install --with-deps
+
+    # E2E Tests
+    - name: Executar testes E2E
+      run: npm run test:e2e
+      continue-on-error: true
+
+    - name: Converter Cucumber para Allure
+      if: always()
+      run: npm run test:allure:convert
+      continue-on-error: true
+
+    - name: Gerar Allure Report
+      if: always()
+      run: npm run test:allure:generate
+
+    - name: Deploy Allure Report - E2E
+      if: always() && github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        destination_dir: ./e2e-tests
+
+    - name: E2E Tests Concluído
+      if: always()
+      run: echo "E2E Tests completado em https://JaderTS.github.io/test-automation-desafio-outsera/e2e-tests/"

@@ -1,0 +1,73 @@
+name: API Tests Scheduled
+
+on:
+  schedule:
+    # 08:00 AM UTC (ajuste para seu timezone) - Brasil: 11 PM UTC anterior (-3h)
+    - cron: '0 11 * * *'
+  workflow_dispatch:  
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  pull-requests: write
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      VALID_USERNAME: ${{ secrets.VALID_USERNAME }}
+      VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
+      API_BASE_URL: https://jsonplaceholder.typicode.com
+      NODE_ENV: test
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Instalar dependências
+      run: npm install
+
+    - name: Instalar Playwright browsers
+      run: npx playwright install --with-deps
+
+    # API Tests (Playwright)
+    - name: Executar testes de API
+      run: npm run test:api
+      continue-on-error: true
+
+    # API Tests (Rest Assured)
+    - name: Executar testes Rest Assured
+      run: npm run test:api:rest
+      continue-on-error: true
+
+    # Converter e gerar relatório Allure
+    - name: Converter para Allure
+      if: always()
+      run: npm run playwright:api:convert
+      continue-on-error: true
+
+    - name: Gerar Allure Report
+      if: always()
+      run: npm run test:allure:generate
+
+    # Deploy apenas na main
+    - name: Deploy Allure Report - API
+      if: always() && github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        destination_dir: ./api-tests
+
+    - name: API Tests Concluído
+      if: always()
+      run: echo "API Tests completado e publicado em https://JaderTS.github.io/test-automation-desafio-outsera/api-tests/"
