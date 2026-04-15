@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    // Versão do JavaScript que será gerada
+    "target": "ES2020",
+
+    // Sistema de módulos
+    "module": "commonjs",
+
+    // Bibliotecas de tipos
+    "lib": ["ES2020"],
+
+    // Pasta de saída (não usamos, mas deixa configurado)
+    "outDir": "./dist",
+
+    // Pasta raiz dos arquivos
+    "rootDir": "./",
+
+    // Modo strict (mais verificações)
+    "strict": true,
+
+    // Importar módulos ES6 como CommonJS
+    "esModuleInterop": true,
+
+    // Pular verificação de tipos em node_modules
+    "skipLibCheck": true,
+
+    // Forçar consistência de case em imports
+    "forceConsistentCasingInFileNames": true,
+
+    // Permitir importar JSON
+    "resolveJsonModule": true,
+
+    // Estratégia de resolução de módulos
+    "moduleResolution": "node",
+
+    // Permitir default imports de módulos ES6
+    "allowSyntheticDefaultImports": true,
+
+    // Gerar arquivos de declaração .d.ts
+    "declaration": true,
+
+    // Gerar sourcemaps para debug
+    "sourceMap": true,
+
+    // Declaração de tipos para bibliotecas
+    "types": ["@playwright/test", "node"]
+  },
+
+  // Arquivos a incluir
+  "include": [
+    "tests/**/*.ts",
+    "*.config.ts"
+  ],
+
+  // Arquivos a excluir
+  "exclude": [
+    "node_modules",
+    "dist",
+    "playwright-report",
+    "test-results"
+  ]
+}

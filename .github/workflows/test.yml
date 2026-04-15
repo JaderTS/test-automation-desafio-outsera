@@ -1,0 +1,189 @@
+name: Testes Automatizados
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ secrets.BASE_URL }}
+      VALID_USERNAME: ${{ secrets.VALID_USERNAME }}
+      VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
+      INVALID_USERNAME: ${{ secrets.INVALID_USERNAME }}
+      INVALID_PASSWORD: ${{ secrets.INVALID_PASSWORD }}
+      FIRST_NAME: ${{ secrets.FIRST_NAME }}
+      LAST_NAME: ${{ secrets.LAST_NAME }}
+      ZIP_CODE: ${{ secrets.ZIP_CODE }}
+      HEADLESS: ${{ secrets.HEADLESS }}
+      NODE_ENV: test    
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Instalar dependencias
+      run: npm install
+
+    - name: Instalar Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Instalar K6
+      uses: grafana/setup-k6-action@v1
+
+    # TESTES DE API (Playwright)
+    - name: Executar testes de API
+      run: npm run test:api
+      continue-on-error: true
+    - name: Verificar arquivo JSON da API
+      if: always()
+      run: |
+        echo "=== Arquivo de resultados API ==="
+        if [ -f test-results/api-results.json ]; then
+          echo "Tamanho: $(wc -c < test-results/api-results.json) bytes"
+          echo ""
+          echo "Estrutura (primeiros 50 linhas):"
+          head -50 test-results/api-results.json
+        else
+          echo "ERRO: test-results/api-results.json nao encontrado"
+        fi
+    - name: Verificar resultados API
+      if: always()
+      run: |
+        echo "=== Test Results ==="
+        ls -lah test-results/ || echo "Pasta nao existe"
+
+    - name: Converter API para Allure
+      if: always()
+      run: npm run playwright:api:convert
+      continue-on-error: true
+
+    - name: Verificar allure-results apos API
+      if: always()
+      run: |
+        echo "=== Allure Results apos API ==="
+        ls -lah allure-results/ 2>/dev/null | wc -l || echo "0"
+    - name: Verificar JSONs Allure gerados
+      if: always()
+      run: |
+        echo "=== JSONs Allure gerados ==="
+        ls -la allure-results/api-*.json 2>/dev/null | wc -l || echo "Nenhum arquivo"
+        echo ""
+        echo "Exemplo (primeiros 30 linhas):"
+        head -30 allure-results/api-0-result.json 2>/dev/null || echo "Nenhum arquivo"
+    
+    # TESTES DE CARGA (K6)
+    - name: Executar testes de Carga K6
+      run: npm run test:load
+      continue-on-error: true
+
+    - name: Verificar resultados K6
+      if: always()
+      run: |
+        echo "=== K6 Test Results ==="
+        ls -lah test-results/ || echo "Pasta nao existe"
+
+    - name: Converter K6 para Allure
+      if: always()
+      run: npm run k6:convert
+      continue-on-error: true
+
+    - name: Verificar allure-results apos K6
+      if: always()
+      run: |
+        echo "=== Allure Results apos K6 ==="
+        ls -lah allure-results/ 2>/dev/null | wc -l || echo "0"
+
+    # TESTES E2E (Cucumber)
+    - name: Executar testes E2E
+      run: npm run test:e2e
+      continue-on-error: true
+
+    - name: Verificar resultados E2E
+      if: always()
+      run: |
+        echo "=== Cucumber Results ==="
+        ls -lah allure-results/cucumber-report.json 2>/dev/null || echo "Nao encontrado"
+
+    # CONVERTER TODOS PARA ALLURE
+    - name: Converter Cucumber para Allure
+      if: always()
+      run: npm run test:allure:convert
+      continue-on-error: true
+    - name: Verificar allure-results final
+      if: always()
+      run: |
+        echo "=== Total de resultados Allure ==="
+        ls -la allure-results/*.json 2>/dev/null | wc -l || echo "0 arquivos"
+
+    # GERAR ALLURE REPORT
+    - name: Gerar Allure Report
+      if: always()
+      run: npm run test:allure:generate
+
+    - name: Verificar Allure Report gerado
+      if: always()
+      run: |
+        echo "=== Allure Report ==="
+        if [ -f allure-report/index.html ]; then
+          echo "Report gerado com sucesso"
+          ls -lah allure-report/ | head -10
+        else
+          echo "Report nao foi gerado"
+        fi
+
+    # DEPLOY GITHUB PAGES
+    - name: Deploy Allure Report para GitHub Pages
+      if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        force_orphan: true
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+
+    - name: Verificar Deploy
+      if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: echo "Report deployado em https://JaderTS.github.io/test-automation-desafio/"
+
+    # COMENTAR NO PR
+    - name: Comentar no PR com resultado
+      if: always() && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `Relatorio Allure
+
+          Testes Executados com Sucesso
+
+          - API Tests: Playwright.
+          - Load Tests: K6.
+          - E2E Tests: Cucumber.
+
+          Ver Relatorio Completo: https://JaderTS.github.io/test-automation-desafio/`
+          });

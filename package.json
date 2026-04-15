@@ -1,0 +1,94 @@
+{
+  "name": "test-automation-playwright",
+  "version": "1.0.0",
+  "description": "Projeto completo de automação de testes com Playwright - API (JSONPlaceholder), E2E (Swag Labs), CI/CD e Load Testing com K6",
+  "author": "JaderTS",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JaderTS/test-automation.git"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "testing",
+    "api",
+    "e2e",
+    "cucumber",
+    "k6",
+    "load-testing",
+    "ci-cd"
+  ],
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
+  "scripts": {
+    "test:api": "playwright test --config=playwright-api.config.ts",
+    "test:api:rest": "node tests/api/rest-assured-api-tests.js",
+    "test:api:all": "npm run test:api && npm run test:api:rest",
+    "playwright:api:convert": "node scripts/playwright-api-to-allure.js",
+    "test:load": "mkdir -p test-results && k6 run tests/load/api-load-test.js",
+    "test:load:500vu": "mkdir -p test-results && k6 run tests/load/api-load-test-500vu.js",
+    "test:load:report": "node scripts/k6-report-analyzer.js",
+    "test:load:full": "npm run test:load:500vu && npm run test:load:report",
+    "k6:convert": "node scripts/k6-to-allure.js",
+    "test:e2e": "cucumber-js",
+    "test:e2e:negative": "cucumber-js tests/e2e/features/checkout-negative-scenarios.feature tests/e2e/features/login-negative.feature tests/e2e/features/checkout-negative.feature",
+    "test:e2e:all": "npm run test:e2e && npm run test:e2e:negative",
+    "test:e2e:report": "node scripts/e2e-report-analyzer.js",
+    "test:full": "npm run test:api:all && npm run test:e2e:all && npm run test:load:full",
+    "test:allure:convert": "npm run playwright:api:convert && npm run k6:convert && node scripts/cucumber-to-allure.js",
+    "test:allure:generate": "allure generate allure-results --clean -o allure-report",
+    "test:allure:open": "allure open allure-report",
+    "format": "prettier --write \"tests/**/*.ts\"",
+    "clean": "rm -rf node_modules dist playwright-report test-results playwright-report .nyc_output coverage",
+    "install:browsers": "playwright install",
+    "install:browsers:deps": "playwright install-deps",
+    "pretest": "npm run lint",
+    "dev": "playwright test --watch"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^9.6.0",
+    "@cucumber/html-formatter": "^23.1.0",
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "allure-commandline": "^2.38.1",
+    "eslint": "^9.0.0",
+    "k6": "^0.0.0",
+    "prettier": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.0"
+  },
+  "dependencies": {
+    "axios": "^1.15.0",
+    "dotenv": "^16.6.1"
+  },
+  "optionalDependencies": {
+    "k6": "^0.50.0"
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "printWidth": 100
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "env": {
+      "node": true,
+      "es2020": true
+    },
+    "rules": {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "no-console": "off"
+    }
+  }
+}
