@@ -165,7 +165,7 @@ jobs:
 
     - name: Verificar Deploy
       if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: echo "Report deployado em https://JaderTS.github.io/test-automation-desafio/"
+      run: echo "Report deployado em https://JaderTS.github.io/test-automation-desafio-outsera/"
 
     # COMENTAR NO PR
     - name: Comentar no PR com resultado
@@ -185,5 +185,5 @@ jobs:
           - Load Tests: K6.
           - E2E Tests: Cucumber.
 
-          Ver Relatorio Completo: https://JaderTS.github.io/test-automation-desafio/`
+          Ver Relatorio Completo: https://JaderTS.github.io/test-automation-desafio-outsera/`
           });
