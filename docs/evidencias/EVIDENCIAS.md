@@ -8,7 +8,7 @@ Este documento registra as evidencias de execucao dos testes automatizados do pr
 
 O relatorio completo com todos os resultados esta disponivel online:
 
-**URL:** https://JaderTS.github.io/test-automation-desafio/
+**URL:** https://JaderTS.github.io/test-automation-desafio-outsera/
 
 O relatorio e atualizado automaticamente a cada push na branch `main` pelo pipeline de CI/CD.
 
@@ -138,6 +138,6 @@ Os resultados de cada execucao podem ser consultados em:
 
 ## Como Consultar Evidencias
 
-1. **Relatorio online:** Acessar https://JaderTS.github.io/test-automation-desafio/
+1. **Relatorio online:** Acessar https://JaderTS.github.io/test-automation-desafio-outsera/
 2. **Logs do CI:** Ir na aba "Actions" do repositorio no GitHub
 3. **Relatorio local:** Executar os testes e gerar o relatorio com `npm run test:allure:generate && npm run test:allure:open`

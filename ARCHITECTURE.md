@@ -216,7 +216,7 @@ O Allure e um framework de relatorios que unifica os resultados de todas as ferr
 - Historico de execucoes (quando executado repetidamente)
 
 O relatorio e publicado no GitHub Pages e acessivel em:
-https://JaderTS.github.io/test-automation-desafio/
+https://JaderTS.github.io/test-automation-desafio-outsera/
 
 ---
 

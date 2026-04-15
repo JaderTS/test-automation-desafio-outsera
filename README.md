@@ -374,7 +374,7 @@ O relatorio Allure unifica os resultados de todos os tipos de teste (API, E2E e 
 
 O relatorio mais recente da branch main e publicado automaticamente no GitHub Pages:
 
-https://JaderTS.github.io/test-automation-desafio/
+https://JaderTS.github.io/test-automation-desafio-outsera/
 
 ---
 
