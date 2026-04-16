@@ -48,7 +48,7 @@ jobs:
       run: npm run test:allure:generate
 
     - name: Deploy Allure Report - Load Tests
-      if: always() && github.ref == 'refs/heads/main'
+      if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
