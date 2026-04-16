@@ -18,6 +18,9 @@ jobs:
       BASE_URL: ${{ secrets.BASE_URL }}
       VALID_USERNAME: ${{ secrets.VALID_USERNAME }}
       VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
+      INVALID_USERNAME: ${{ secrets.INVALID_USERNAME }}
+      INVALID_PASSWORD: ${{ secrets.INVALID_PASSWORD }}
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}   
       FIRST_NAME: ${{ secrets.FIRST_NAME }}
       LAST_NAME: ${{ secrets.LAST_NAME }}
       ZIP_CODE: ${{ secrets.ZIP_CODE }}
