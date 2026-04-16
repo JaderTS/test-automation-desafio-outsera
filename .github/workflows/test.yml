@@ -161,6 +161,14 @@ jobs:
         publish_dir: ./allure-report
         keep_files: true
 
+    - name: Deploy Combined Report
+      if: always() && (github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main')
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        keep_files: true
+
     - name: Verificar Deploy
       if: always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: echo "Report deployado em https://JaderTS.github.io/test-automation-desafio-outsera/"
