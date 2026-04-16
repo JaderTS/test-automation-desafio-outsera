@@ -1,1 +1,1 @@
-{}
+{"k6-load-test":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"9d469739f8e348e6","status":"failed","time":{"start":1776367563279,"stop":1776367564279,"duration":1000}}]}}
