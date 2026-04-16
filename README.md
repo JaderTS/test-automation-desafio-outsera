@@ -142,7 +142,7 @@ test-automation-desafio/
 1. Clonar o repositorio:
 
 ```bash
-git clone https://github.com/JaderTS/test-automation-desafio.git
+git clone https://github.com/JaderTS/test-automation-desafio-outsera.git
 cd test-automation-desafio
 ```
 
