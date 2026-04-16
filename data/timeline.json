@@ -1,1 +1,1 @@
-{"uid":"ab17fc5a4eb3bca4b216b548c7f9fcbc","name":"timeline","children":[{"name":"K6 Load Test","uid":"9d469739f8e348e6","parentUid":"ab17fc5a4eb3bca4b216b548c7f9fcbc","status":"failed","time":{"start":1776367563279,"stop":1776367564279,"duration":1000},"flaky":false,"newFailed":false,"newPassed":false,"newBroken":false,"retriesCount":0,"retriesStatusChange":false,"parameters":[],"tags":[]}]}
+{"uid":"ab17fc5a4eb3bca4b216b548c7f9fcbc","name":"timeline","children":[]}
