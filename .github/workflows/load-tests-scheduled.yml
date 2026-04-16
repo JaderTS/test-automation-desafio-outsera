@@ -55,6 +55,14 @@ jobs:
         publish_dir: ./allure-report
         destination_dir: ./load-tests
 
+    - name: Deploy Combined Report - Load Tests
+      if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./allure-report
+        keep_files: true
+
     - name: Load Tests Concluído
       if: always()
       run: echo "Load Tests completado em https://JaderTS.github.io/test-automation-desafio-outsera/load-tests/"
