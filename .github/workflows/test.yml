@@ -92,7 +92,7 @@ jobs:
     
     # TESTES DE CARGA (K6)
     - name: Executar testes de Carga K6
-      run: npm run test:load
+      run: npm run test:load:500uv
       continue-on-error: true
 
     - name: Verificar resultados K6
@@ -177,17 +177,27 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
+          const reportUrl = 'https://JaderTS.github.io/test-automation-desafio-outsera/';
+          const body = `## Relatórios de Testes
+
+           Testes Executados com Sucesso!
+
+          ### Relatórios Disponíveis:
+          - **[Relatório Principal](${reportUrl})** - Todos os testes
+          - **[API Tests](${reportUrl}api-tests/)** - Testes de API
+          - **[E2E Tests](${reportUrl}e2e-tests/)** - Testes End-to-End
+          - **[Load Tests](${reportUrl}load-tests/)** - Testes de Carga
+
+          ---
+          **Ferramentas utilizadas:**
+          - API Tests: Playwright
+          - E2E Tests: Cucumber
+          - Load Tests: K6
+          `;
+          
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `Relatorio Allure
-
-          Testes Executados com Sucesso
-
-          - API Tests: Playwright.
-          - Load Tests: K6.
-          - E2E Tests: Cucumber.
-
-          Ver Relatorio Completo: https://JaderTS.github.io/test-automation-desafio-outsera/`
+            body: body
           });
