@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BASE_URL: ${{ secrets.BASE_URL }}
+      API_BASE_URL: ${{ secrets.API_BASE_URL }}
       VALID_USERNAME: ${{ secrets.VALID_USERNAME }}
       VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
       INVALID_USERNAME: ${{ secrets.INVALID_USERNAME }}
@@ -25,11 +26,8 @@ jobs:
       FIRST_NAME: ${{ secrets.FIRST_NAME }}
       LAST_NAME: ${{ secrets.LAST_NAME }}
       ZIP_CODE: ${{ secrets.ZIP_CODE }}
-      HEADLESS: ${{ secrets.HEADLESS }}
-      NODE_ENV: test    
-    strategy:
-      matrix:
-        node-version: [18.x]
+      HEADLESS: true
+      NODE_ENV: test     
 
     steps:
     - uses: actions/checkout@v4
