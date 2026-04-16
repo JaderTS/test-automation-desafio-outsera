@@ -67,14 +67,6 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./allure-report
         destination_dir: ./api-tests
-        
-    - name: Deploy Combined Report - API
-      if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./allure-report
-        keep_files: true
 
     - name: API Tests Concluído
       if: always()
