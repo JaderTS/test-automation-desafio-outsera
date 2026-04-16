@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const k6ResultsPath = './test-results/load-test-results.json';
+let k6ResultsPath = './test-results/load-test-500vu-results.json';
+if (!fs.existsSync(k6ResultsPath)) {
+  k6ResultsPath = './test-results/load-test-results.json';
+}
 
 console.log(`Procurando testes K6 em: ${k6ResultsPath}`);
 
