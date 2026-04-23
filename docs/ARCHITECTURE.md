@@ -6,22 +6,33 @@ Este documento descreve a arquitetura e as decisoes tecnicas do projeto de autom
 
 ## Visao Geral
 
-O projeto esta organizado em tres pilares de teste, cada um com sua propria estrutura e ferramentas:
-
-```
-Testes de API (Playwright + Axios + Rest Assured)
-    |
-    v
-Testes E2E (Cucumber + Playwright)
-    |
-    v
-Testes de Carga (K6)
-    |
-    v
-Relatorios (HTML + Allure)
-    |
-    v
-GitHub Pages (publicacao automatica)
+```text
+┌─────────────────────────────────────────────────────────┐
+│                 TESTES ISOLADOS E AGENDADOS             │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│ API Tests Scheduled              E2E Tests Scheduled    │
+│ (8 AM UTC) ~5-10 min             (12 PM UTC) ~15-20 min │
+│                                                         │
+│        v                               v                │
+│ Playwright + Axios             Cucumber + Playwright    │
+│ Page Objects                   BDD + Scenario Outline   │
+│                                                         │
+│ Load Tests Scheduled            Fast Tests (PR/Push)    │
+│ (3 PM UTC) ~20-30 min           ~2-3 min                │
+│                                                         │
+│        v                               v                │
+│ K6 (500 VUs, 7 endpoints)       API Tests + Comentario  │
+├─────────────────────────────────────────────────────────┤
+│                 CONVERSAO E PUBLICACAO                  │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│ Allure Report (Unificado ou Isolado)                    │
+│        |                                                │
+│        v                                                │
+│ GitHub Pages (/api-tests, /e2e-tests, /load-tests)      │
+│                                                         │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -32,37 +43,37 @@ GitHub Pages (publicacao automatica)
 
 ### Estrutura
 
-```
+```text
 tests/api/
 ├── endpoints/
-│   ├── posts.spec.ts       # 16 testes (GET, POST, PUT, DELETE)
-│   ├── users.spec.ts       # 19 testes (CRUD completo)
+│   ├── posts.spec.ts       # CRUD de posts (GET, POST, PUT, DELETE)
+│   ├── users.spec.ts       # CRUD de usuarios
 │   ├── comments.spec.ts    # Testes de comentarios
 │   └── todos.spec.ts       # Testes de tarefas
-├── support/
-│   ├── api.client.ts        # Cliente HTTP com Axios
-│   └── test.fixtures.ts     # Fixtures do Playwright
-└── rest-assured-api-tests.js  # Testes REST Assured (Node.js + Axios)
+└── support/
+    ├── api.client.ts       # Cliente HTTP com Axios
+    └── test.fixtures.ts    # Fixtures do Playwright
 ```
 
 ### Decisoes Tecnicas
 
 - **Playwright como runner:** Aproveitamos o Playwright como framework de teste mesmo para API, usando suas capacidades de assertion, paralelismo e report.
-
-- **Axios como cliente HTTP:** O Axios fornece uma interface simples e robusta para chamadas HTTP, com suporte a interceptors e configuracao de timeout.
-
-- **Cliente API reutilizavel:** A classe `ApiClient` encapsula todas as chamadas HTTP com tratamento de erros padronizado e logging. A opcao `validateStatus: () => true` permite capturar respostas de erro sem lancar excecoes, facilitando testes negativos.
-
-- **Fixtures do Playwright:** Os testes usam fixtures para injetar uma instancia do `ApiClient` automaticamente, mantendo os testes limpos.
-
-- **Rest Assured (Node.js):** Testes de API standalone usando Axios diretamente, equivalente ao Rest Assured do Java. Permite execucao independente do Playwright com validacao de status codes, headers e corpo de resposta.
+- **Axios como cliente HTTP:** Interface simples e robusta com suporte a interceptors e configuracao de timeout.
+- **Cliente API reutilizavel:** A classe `ApiClient` encapsula chamadas HTTP com tratamento de erros padronizado. `validateStatus: () => true` permite capturar respostas de erro sem lancar excecoes.
+- **Fixtures do Playwright:** Injetam uma instancia do `ApiClient` automaticamente nos testes, eliminando boilerplate.
 
 ### Cobertura de Cenarios
 
 Cada endpoint possui:
 - Testes positivos (resposta correta com dados validos)
-- Testes negativos (IDs inexistentes, payloads vazios, dados invalidos)
+- Testes negativos (IDs inexistentes, payloads invalidos)
 - Validacao de status code, headers e corpo da resposta
+
+### Execucao
+
+- **Localmente:** `npm run test:api`
+- **Agendada:** Workflow `api-scheduled.yml` dispara diariamente as 8 AM UTC
+- **Em PR:** Workflow `fast-tests-on-pr.yml` executa versao rapida
 
 ---
 
@@ -72,57 +83,49 @@ Cada endpoint possui:
 
 ### Estrutura
 
-```
+```text
 tests/e2e/
-├── features/                              # Arquivos .feature em Gherkin
-│   ├── login.feature                      # Fluxos de login e logout
-│   ├── login-negative.feature             # Cenarios negativos de login
-│   ├── cart.feature                        # Adicionar/remover produtos
-│   ├── checkout.feature                   # Finalizar compra
-│   ├── checkout-negative.feature          # Cenarios negativos de checkout
-│   └── checkout-negative-scenarios.feature # Cenarios negativos com evidencias
-├── pages/                                 # Page Objects
-│   ├── LoginPage.ts                       # Pagina de login
-│   ├── InventoryPage.ts                   # Pagina de produtos
-│   ├── CartPage.ts                        # Pagina do carrinho
-│   └── CheckoutPage.ts                    # Pagina de checkout
-├── steps/                                 # Step definitions do Cucumber (TypeScript)
+├── features/                   # Arquivos .feature em Gherkin
+│   ├── login.feature           # Login, logout e cenarios negativos
+│   ├── cart.feature            # Adicionar/remover produtos
+│   └── checkout.feature        # Finalizar compra e cenarios negativos
+├── pages/                      # Page Objects
+│   ├── LoginPage.ts
+│   ├── InventoryPage.ts
+│   ├── CartPage.ts
+│   └── CheckoutPage.ts
+├── steps/                      # Step definitions do Cucumber (TypeScript)
 │   ├── login.steps.ts
-│   ├── login-negative-steps.ts
 │   ├── cart.steps.ts
 │   ├── checkout.steps.ts
-│   ├── checkout-negative-steps.ts
 │   └── common.steps.ts
-├── step_definitions/                      # Step definitions adicionais (JavaScript)
-│   └── checkout-negative.steps.js         # Cenarios negativos com captura de screenshots
 └── support/
-    ├── env.ts                             # Variaveis de ambiente
-    ├── hooks.ts                           # Hooks do Cucumber (Before/After)
-    ├── world.ts                           # World do Cucumber
-    └── allure.ts                          # Integracao com Allure
+    ├── env.ts
+    ├── hooks.ts
+    ├── world.ts
+    └── allure.ts
 ```
 
 ### Decisoes Tecnicas
 
-- **Page Object Pattern:** Cada pagina da aplicacao tem uma classe dedicada que encapsula os seletores e acoes. Isso facilita manutencao - se um seletor mudar, so precisa atualizar em um lugar.
-
-- **Cucumber (BDD):** Os cenarios sao escritos em linguagem natural (Gherkin), permitindo que qualquer pessoa entenda o que esta sendo testado. Os step definitions fazem a ponte entre o texto e o codigo.
-
-- **Playwright como motor de browser:** O Playwright controla o navegador (Chromium) por baixo do Cucumber, executando as acoes definidas nos steps.
-
-- **Hooks (Before/After):** Os hooks garantem que cada cenario comeca com o navegador aberto e termina com a limpeza de recursos. Screenshots sao capturadas automaticamente em caso de falha.
-
-- **Captura de screenshots em cada passo:** Os step definitions em `step_definitions/` capturam screenshots em cada passo do cenario, gerando evidencias visuais completas.
-
-- **Variaveis de ambiente:** Credenciais e URLs sao carregadas do `.env`, mantendo dados sensiveis fora do codigo.
+- **Page Object Pattern:** Cada pagina tem uma classe dedicada que encapsula seletores e acoes. Os steps nunca referenciam seletores diretamente.
+- **Cucumber (BDD):** Cenarios escritos em Gherkin, acessiveis a qualquer pessoa da equipe. Os step definitions fazem a ponte entre texto e codigo.
+- **Scenario Outline:** Cenarios negativos de login e checkout usam `Scenario Outline + Examples`, eliminando arquivos duplicados e concentrando variacoes em uma unica tabela de dados.
+- **Playwright como motor de browser:** Controla o navegador (Chromium) por baixo do Cucumber.
+- **Hooks (Before/After):** O hook Before abre o browser; o hook After captura screenshot em caso de falha e fecha o browser. A responsabilidade de screenshot esta centralizada nos hooks, nao nos steps.
+- **Variaveis de ambiente:** Credenciais e URLs carregadas do `.env`.
 
 ### Fluxos Testados
 
-- **Login:** Cenarios de sucesso, erro de credenciais, campos vazios e logout
-- **Login Negativo:** Senha incorreta, usuario inexistente, campo usuario vazio, campo senha vazio (com validacao de mensagens de erro)
-- **Carrinho:** Adicionar produto, remover, visualizar detalhes, multiplos itens
-- **Checkout:** Fluxo completo, validacao de campos obrigatorios
-- **Checkout Negativo:** Sem primeiro nome, sem sobrenome, sem CEP, todos os campos vazios (com validacao de mensagens de erro e captura de screenshots)
+- **Login:** sucesso, logout e cenarios negativos (senha incorreta, usuario inexistente, campos vazios) com validacao de mensagem especifica
+- **Carrinho:** adicionar produto, remover, visualizar detalhes, multiplos itens
+- **Checkout:** fluxo completo e cenarios negativos (sem primeiro nome, sem sobrenome, sem CEP, todos os campos vazios) com validacao de mensagem especifica
+
+### Execucao
+
+- **Localmente:** `npm run test:e2e`
+- **Agendada:** Workflow `e2e-scheduled.yml` dispara diariamente as 12 PM UTC
+- **Em PR:** Workflow `fast-tests-on-pr.yml` comenta resultado no PR
 
 ---
 
@@ -132,7 +135,7 @@ tests/e2e/
 
 ### Estrutura
 
-```
+```text
 tests/load/
 ├── api-load-test.js        # Script K6 basico
 └── api-load-test-500vu.js  # Teste de carga 500 VUs (7 endpoints)
@@ -140,21 +143,25 @@ tests/load/
 
 ### Decisoes Tecnicas
 
-- **K6:** Ferramenta de performance testing que permite definir cenarios de carga de forma programatica em JavaScript.
-
-- **Estagios de carga:** O teste simula um cenario realista com ramp-up gradual ate 500 usuarios, sustentacao da carga e ramp-down controlado.
-
-- **Thresholds:** Limites automaticos de performance (p95 abaixo de 500ms, taxa de erro abaixo de 0.1%) que determinam se o teste passou ou falhou.
-
-- **handleSummary:** O K6 exporta um resumo estruturado em JSON ao final da execucao, que e utilizado pelo script de conversao para gerar o resultado no formato Allure.
+- **K6:** Ferramenta de performance testing programatica em JavaScript. Suporta testes distribuidos e coleta de metricas detalhadas.
+- **Estagios de carga:** Simula cenario realista com ramp-up gradual, sustentacao e ramp-down controlado.
+- **Thresholds:** Limites automaticos (P95 < 500ms, P99 < 1000ms, erro < 1%) que determinam pass/fail do teste.
+- **handleSummary:** K6 exporta JSON ao final da execucao, usado pelo script de conversao para gerar resultado no formato Allure.
+- **7 endpoints testados:** `GET /posts`, `GET /posts?userId=1`, `GET /posts/:id`, `POST /posts`, `GET /users`, `GET /comments`, `GET /todos`
 
 ### Configuracao dos Estagios (500 VUs)
 
-| Estagio | Duracao | Usuarios |
-|---|---|---|
-| Ramp-up | 1min | 0 a 500 |
-| Sustentacao | 3min | 500 |
-| Ramp-down | 1min | 500 a 0 |
+| Estagio | Duracao | Usuarios | Proposito |
+|---|---|---|---|
+| Ramp-up | 1min | 0 a 500 | Aumento gradual de carga |
+| Sustentacao | 3min | 500 | Teste de estresse |
+| Ramp-down | 1min | 500 a 0 | Reducao controlada |
+
+### Execucao
+
+- **Localmente:** `npm run test:load:500vu`
+- **Agendada:** Workflow `load-tests-scheduled.yml` dispara diariamente as 3 PM UTC
+- **Com relatorio HTML:** `npm run test:load:full`
 
 ---
 
@@ -164,81 +171,184 @@ tests/load/
 
 ### Scripts de Conversao (Allure)
 
-- **playwright-api-to-allure.js** - Le o JSON gerado pelo Playwright (`test-results/api-results.json`) e cria arquivos Allure individuais para cada teste. Navega a estrutura `suites > specs > tests > results` do Playwright.
-
-- **k6-to-allure.js** - Le o JSON de sumario do K6 (`test-results/load-test-results.json`) e cria um resultado Allure com os checks e metricas HTTP como steps.
-
-- **cucumber-to-allure.js** - Le o JSON do Cucumber (`allure-results/cucumber-report.json`) e converte cada cenario em um resultado Allure com os steps correspondentes.
+- **playwright-api-to-allure.js** - Le o JSON gerado pelo Playwright (`test-results/api-results.json`) e cria arquivos Allure individuais para cada teste. Navega a estrutura `suites > specs > tests`.
+- **k6-to-allure.js** - Le o JSON de sumario do K6 e cria um resultado Allure com checks e metricas HTTP como steps.
+- **cucumber-to-allure.js** - Le o JSON do Cucumber e converte cada cenario em um resultado Allure com steps e screenshots como attachments.
 
 ### Analisadores de Relatorio (HTML)
 
-- **k6-report-analyzer.js** - Le resultados do K6 e gera relatorio HTML profissional com graficos de latencia (Avg, P90, P95, P99), grafico de taxa de erro, grafico de throughput, analise de gargalos e recomendacoes de otimizacao. Saida: `test-results/load-test-report.html`.
-
-- **e2e-report-analyzer.js** - Le resultados do Cucumber e gera relatorio HTML com resultado de cada cenario, screenshots de cada passo, testes positivos e negativos, falhas esperadas e evidencias visuais. Saida: `test-results/e2e-report.html`.
+- **k6-report-analyzer.js** - Gera relatorio HTML com graficos de latencia (Avg, P90, P95, P99), taxa de erro, throughput, gargalos identificados e recomendacoes. Saida: `test-results/load-test-report.html`.
+- **e2e-report-analyzer.js** - Gera relatorio HTML com resultado de cada cenario, screenshots de falha e evidencias. Saida: `test-results/e2e-report.html`.
 
 ---
 
-## CI/CD
+## CI/CD: Workflows Profissionais
 
-**Arquivo:** `.github/workflows/test.yml`
+### 1. Fast Tests on PR (`fast-tests-on-pr.yml`)
 
-### Fluxo do Pipeline
+**Quando executa:** Push em `develop` ou Pull Request para `main/develop`
 
+**O que executa:** Testes de API (Playwright) — ~2-3 minutos
+
+**Saida:** Comenta no PR com resultado dos testes
+
+---
+
+### 2. API Tests Scheduled (`api-scheduled.yml`)
+
+**Quando executa:** Diariamente as 8:00 AM UTC
+
+**O que executa:** Playwright API Tests — ~5-10 minutos
+
+**Saida:** Allure Report em `/api-tests/` no GitHub Pages
+
+---
+
+### 3. E2E Tests Scheduled (`e2e-scheduled.yml`)
+
+**Quando executa:** Diariamente as 12:00 PM UTC
+
+**O que executa:** Cucumber + Playwright (cenarios positivos e negativos) — ~15-20 minutos
+
+**Saida:** Allure Report em `/e2e-tests/` no GitHub Pages
+
+---
+
+### 4. Load Tests Scheduled (`load-tests-scheduled.yml`)
+
+**Quando executa:** Diariamente as 3:00 PM UTC
+
+**O que executa:** K6 com 500 VUs, 7 endpoints — ~20-30 minutos
+
+**Saida:** Allure Report em `/load-tests/` no GitHub Pages
+
+---
+
+## Pipeline Detalhado
+
+### Fast Tests on PR
+
+```text
+Setup Node.js → npm install → Playwright browsers → npm run test:api → Comenta no PR
 ```
-Push/PR
-  |
-  v
-Setup (Node.js, K6, Playwright)
-  |
-  v
-Testes API --> Conversao Allure
-  |
-  v
-Testes Carga --> Conversao Allure
-  |
-  v
-Testes E2E --> Conversao Allure
-  |
-  v
-Geracao do Allure Report
-  |
-  v
-Deploy GitHub Pages (apenas main)
-  |
-  v
-Comentario no PR (apenas PRs)
+
+### API Tests Scheduled
+
+```text
+Setup Node.js → npm install → Playwright browsers → npm run test:api
+  → npm run playwright:api:convert → npm run test:allure:generate
+  → Deploy em /api-tests/ no GitHub Pages
 ```
 
-### Configuracao
+### E2E Tests Scheduled
 
-- **Runner:** Ubuntu latest
-- **Node.js:** 18.x
-- **K6:** Instalado via `grafana/setup-k6-action@v1`
-- **Playwright:** Navegadores instalados com `--with-deps`
-- **continue-on-error:** Cada etapa de teste permite falha sem bloquear as demais etapas
-- **Allure Report:** Gerado e publicado no GitHub Pages automaticamente
+```text
+Setup Node.js → npm install → Playwright browsers → npm run test:e2e
+  → npm run test:allure:convert → npm run test:allure:generate
+  → Deploy em /e2e-tests/ no GitHub Pages
+```
+
+### Load Tests Scheduled
+
+```text
+Setup Node.js → npm install → Instalar K6 → npm run test:load:500vu
+  → npm run k6:convert → npm run test:allure:generate
+  → Deploy em /load-tests/ no GitHub Pages
+```
+
+---
+
+## Configuracao de Timezone
+
+| Horario Sao Paulo | UTC | Cron |
+|---|---|---|
+| 8:00 AM | 11:00 PM (dia anterior) | `0 23 * * *` |
+| 12:00 PM | 3:00 PM | `0 15 * * *` |
+| 3:00 PM | 6:00 PM | `0 18 * * *` |
 
 ---
 
 ## Configuracoes
 
-### playwright-api.config.ts
+### `playwright-api.config.ts`
 
-Configuracao dedicada para testes de API:
 - Gera relatorio JSON em `test-results/api-results.json`
 - Timeout de 30 segundos por teste
 - Retry de 1 tentativa no CI
+- Roda em paralelo com workers
 
-### cucumber.js
+### `playwright.config.ts`
 
-Configuracao do Cucumber:
+- Roda 1 worker de cada vez (E2E requer browser aberto)
+- Timeout de 60 segundos por teste
+
+### `cucumber.js`
+
 - Gera relatorio JSON em `allure-results/cucumber-report.json`
-- Carrega step definitions de `tests/e2e/steps/` e `tests/e2e/step_definitions/`
+- Carrega step definitions de `tests/e2e/steps/`
 - Carrega suporte de `tests/e2e/support/`
 
-### tsconfig.json
+### `tsconfig.json`
 
-Configuracao do TypeScript:
 - Target ES2020 com CommonJS
 - Modo strict ativado
 - Resolve JSON modules
+- Source maps para debugging
+
+---
+
+## Stack Tecnologico
+
+| Camada | Tecnologia | Justificativa |
+|---|---|---|
+| Framework API | Playwright + Axios | Setup unico, flexibilidade HTTP |
+| BDD/E2E | Cucumber + Playwright | Testes legiveis, automacao de browser |
+| Performance | K6 | Load testing a nivel de protocolo, JavaScript |
+| Relatorios | Allure | Unificado, visual, com historico |
+| CI/CD | GitHub Actions | Nativo, sem custos adicionais |
+| Linguagem | TypeScript | Type safety em toda a suite |
+
+---
+
+## Boas Praticas
+
+### Testes de API
+- Um arquivo por recurso (`posts.spec.ts`, `users.spec.ts`)
+- Testes positivos e negativos para cada endpoint
+- Validar status code, headers e corpo da resposta
+- Usar fixtures para injecao de dependencias
+
+### Testes E2E
+- Uma feature por fluxo de usuario
+- Page Objects para cada pagina — nenhum seletor nos steps
+- Scenario Outline para cenarios que variam apenas em entrada/saida
+- Variaveis de ambiente para credenciais
+- Screenshots centralizadas no hook After (somente em falha)
+
+### Testes de Carga
+- Thresholds realistas (P95 < 500ms, P99 < 1000ms)
+- Ramp-up gradual (simula usuarios reais)
+- Coletar metricas por endpoint
+- Executar periodicamente (diariamente) para detectar degradacao
+
+---
+
+## Troubleshooting
+
+### Workflow agendado nao dispara
+- Verificar se o workflow esta ativo em Actions > Schedules
+- Validar timezone da cron expression com o Crontab Guru
+- Disparar manualmente: `gh workflow run api-scheduled.yml`
+
+### Relatorios nao publicam no GitHub Pages
+- Verificar se GitHub Pages esta ativado nas Settings
+- Confirmar que a branch `gh-pages` foi criada
+- Verificar permissoes de deploy
+
+### Taxa de erro alta em Load Tests
+- API JSONPlaceholder pode estar com rate limiting
+- Usar mock server local: `npx json-server --watch mock-data/db.json`
+
+### Testes E2E falham com timeout
+- Aumentar timeout em `cucumber.js`
+- Executar com `HEADLESS=false` para debug visual

@@ -1,20 +1,21 @@
 Feature: Checkout
 
-  Scenario: Checkout com sucesso
+  Background:
     Given que o usuário está autenticado no sistema
     And possui um produto no carrinho
+
+  Scenario: Checkout com sucesso
     When ele preenche os dados de checkout corretamente
     And finaliza a compra
     Then deve visualizar a mensagem de compra concluída
 
-  Scenario: Checkout com nome vazio
-    Given que o usuário está autenticado no sistema
-    And possui um produto no carrinho
-    When ele tenta continuar o checkout sem preencher o nome
-    Then deve visualizar uma mensagem de erro no checkout
+  Scenario Outline: Checkout sem campo obrigatório exibe mensagem de erro
+    When ele tenta finalizar o checkout omitindo "<campo>"
+    Then deve visualizar a mensagem de erro no checkout contendo "<mensagem>"
 
-  Scenario: Checkout com CEP vazio
-    Given que o usuário está autenticado no sistema
-    And possui um produto no carrinho
-    When ele tenta continuar o checkout sem preencher o CEP
-    Then deve visualizar uma mensagem de erro no checkout
+    Examples:
+      | campo          | mensagem                |
+      | primeiro nome  | First Name is required  |
+      | sobrenome      | Last Name is required   |
+      | CEP            | Postal Code is required |
+      | todos os campos| First Name is required  |

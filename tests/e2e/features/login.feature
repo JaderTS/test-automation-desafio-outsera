@@ -3,25 +3,19 @@ Feature: Login
   Scenario: Login com sucesso
     Given que o usuário acessa a página de login
     When ele preenche credenciais válidas
-    And clica em entrar
     Then deve ser redirecionado para a página de produtos
 
-  Scenario: Login com senha inválida
+  Scenario Outline: Login com dados inválidos exibe mensagem de erro
     Given que o usuário acessa a página de login
-    When ele preenche usuário válido e senha inválida
-    And clica em entrar
-    Then deve visualizar uma mensagem de erro de login
+    When ele tenta login com "<tipo>"
+    Then deve visualizar a mensagem de erro contendo "<mensagem>"
 
-  Scenario: Login com usuário inexistente
-    Given que o usuário acessa a página de login
-    When ele preenche um usuário inexistente e uma senha qualquer
-    And clica em entrar
-    Then deve visualizar uma mensagem de erro de autenticação
-
-  Scenario: Login com campos vazios
-    Given que o usuário acessa a página de login
-    When ele clica em entrar sem preencher os campos
-    Then deve visualizar uma mensagem de erro de campos obrigatórios
+    Examples:
+      | tipo                | mensagem                               |
+      | senha incorreta     | Username and password do not match     |
+      | usuario inexistente | Username and password do not match     |
+      | usuario vazio       | Username is required                   |
+      | senha vazia         | Password is required                   |
 
   Scenario: Logout com sucesso
     Given que o usuário está autenticado no sistema
