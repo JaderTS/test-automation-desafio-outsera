@@ -92,7 +92,7 @@ jobs:
     
     # TESTES DE CARGA (K6)
     - name: Executar testes de Carga K6
-      run: npm run test:load:500uv
+      run: npm run test:load:500vu
       continue-on-error: true
 
     - name: Verificar resultados K6
