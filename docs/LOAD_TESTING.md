@@ -132,7 +132,7 @@ O script `k6-report-analyzer.js` gera:
 
 ## Notas Importantes
 
-- O teste roda **manualmente** e nao faz parte do CI/CD automatico
+- O teste e executado **diariamente** pelo workflow `load-tests-scheduled.yml` (3 PM UTC) e tambem pode ser disparado manualmente
 - O script nao interfere nos testes existentes (`api-load-test.js`)
 - Os resultados sao salvos em `test-results/` (diretorio ja no `.gitignore`)
 - A API JSONPlaceholder e publica e pode ter variacao de latencia conforme carga externa

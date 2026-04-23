@@ -27,6 +27,10 @@ export class InventoryPage {
     return this.page.locator('[data-test^="add-to-cart-"]');
   }
 
+  addToCartButton() {
+    return this.page.locator('[data-test="add-to-cart"]');
+  }
+
   removeButtons() {
     return this.page.locator('[data-test^="remove-"]');
   }
