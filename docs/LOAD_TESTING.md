@@ -212,7 +212,7 @@ Salve erros em `load-test-errors.log` para análise posterior.
 ## Notas Importantes
 
 - O teste e executado **diariamente** pelo workflow `load-tests-scheduled.yml` (3 PM UTC) e tambem pode ser disparado manualmente
-- O script nao interfere nos testes existentes (`api-load-test.js`)
+- O unico arquivo de load test e `tests/load/api-load-test-500vu.js`
 - Os resultados sao salvos em `test-results/` (diretorio ja no `.gitignore`)
 - A API JSONPlaceholder e publica e pode ter variacao de latencia conforme carga externa
 - Todos os endpoints implementam captura de erro com `logErrorIfFailed()` para melhor observabilidade

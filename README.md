@@ -26,7 +26,7 @@ Projeto completo de automacao de testes cobrindo API, E2E e Carga, com integraca
 
 Este projeto implementa uma suite completa de testes automatizados dividida em tres categorias:
 
-- **Testes de API** - Validacao de endpoints REST da API JSONPlaceholder utilizando Playwright com Axios. Cobre operacoes GET, POST, PUT e DELETE com cenarios positivos e negativos.
+- **Testes de API** - Validacao de endpoints REST da API JSONPlaceholder utilizando Playwright. Cobre operacoes GET, POST, PUT e DELETE com cenarios positivos e negativos.
 
 - **Testes E2E (End-to-End)** - Fluxos completos de usuario na aplicacao Swag Labs (SauceDemo) utilizando Cucumber com Playwright. Cobre login, carrinho de compras e checkout, com cenarios positivos e negativos via Scenario Outline.
 
@@ -61,14 +61,11 @@ test-automation-desafio/
 │       └── fast-tests-on-pr.yml        # Testes rapidos em PR/Push
 ├── tests/
 │   ├── api/
-│   │   ├── endpoints/                  # Testes de API por recurso
-│   │   │   ├── posts.spec.ts           # CRUD de posts (GET, POST, PUT, DELETE)
-│   │   │   ├── users.spec.ts           # CRUD de usuarios
-│   │   │   ├── comments.spec.ts        # Endpoints de comentarios
-│   │   │   └── todos.spec.ts           # Endpoints de tarefas
-│   │   └── support/
-│   │       ├── api.client.ts           # Cliente HTTP reutilizavel (Axios)
-│   │       └── test.fixtures.ts        # Fixtures do Playwright para API
+│   │   └── endpoints/                  # Testes de API por recurso
+│   │       ├── posts.spec.ts           # CRUD de posts (GET, POST, PUT, DELETE)
+│   │       ├── users.spec.ts           # CRUD de usuarios
+│   │       ├── comments.spec.ts        # Endpoints de comentarios
+│   │       └── todos.spec.ts           # Endpoints de tarefas
 │   ├── e2e/
 │   │   ├── features/                   # Cenarios BDD em Gherkin
 │   │   │   ├── login.feature           # Login, logout e cenarios negativos
@@ -89,7 +86,6 @@ test-automation-desafio/
 │   │       ├── hooks.ts
 │   │       └── world.ts
 │   └── load/
-│       ├── api-load-test.js            # Teste de carga basico com K6
 │       └── api-load-test-500vu.js      # Teste de carga 500 VUs (7 endpoints)
 ├── scripts/
 │   ├── playwright-api-to-allure.js
@@ -410,7 +406,6 @@ gh workflow run fast-tests-on-pr.yml
 | `npm run test:e2e` | Executa todos os testes E2E com Cucumber |
 | `npm run test:e2e:all` | Alias para test:e2e |
 | `npm run test:e2e:report` | Gera relatorio HTML dos testes E2E |
-| `npm run test:load` | Executa teste de carga basico com K6 |
 | `npm run test:load:500vu` | Executa teste de carga 500 VUs (7 endpoints) |
 | `npm run test:load:report` | Gera relatorio HTML do teste de carga |
 | `npm run test:load:full` | Executa teste 500 VUs e gera relatorio |

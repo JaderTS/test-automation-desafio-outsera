@@ -15,7 +15,7 @@ Este documento descreve a arquitetura e as decisoes tecnicas do projeto de autom
 │ (8 AM UTC) ~5-10 min             (12 PM UTC) ~15-20 min │
 │                                                         │
 │        v                               v                │
-│ Playwright + Axios             Cucumber + Playwright    │
+│ Playwright (request fixture)   Cucumber + Playwright    │
 │ Page Objects                   BDD + Scenario Outline   │
 │                                                         │
 │ Load Tests Scheduled            Fast Tests (PR/Push)    │
@@ -45,22 +45,17 @@ Este documento descreve a arquitetura e as decisoes tecnicas do projeto de autom
 
 ```text
 tests/api/
-├── endpoints/
-│   ├── posts.spec.ts       # CRUD de posts (GET, POST, PUT, DELETE)
-│   ├── users.spec.ts       # CRUD de usuarios
-│   ├── comments.spec.ts    # Testes de comentarios
-│   └── todos.spec.ts       # Testes de tarefas
-└── support/
-    ├── api.client.ts       # Cliente HTTP com Axios
-    └── test.fixtures.ts    # Fixtures do Playwright
+└── endpoints/
+    ├── posts.spec.ts       # CRUD de posts (GET, POST, PUT, DELETE)
+    ├── users.spec.ts       # CRUD de usuarios
+    ├── comments.spec.ts    # Testes de comentarios
+    └── todos.spec.ts       # Testes de tarefas
 ```
 
 ### Decisoes Tecnicas
 
 - **Playwright como runner:** Aproveitamos o Playwright como framework de teste mesmo para API, usando suas capacidades de assertion, paralelismo e report.
-- **Axios como cliente HTTP:** Interface simples e robusta com suporte a interceptors e configuracao de timeout.
-- **Cliente API reutilizavel:** A classe `ApiClient` encapsula chamadas HTTP com tratamento de erros padronizado. `validateStatus: () => true` permite capturar respostas de erro sem lancar excecoes.
-- **Fixtures do Playwright:** Injetam uma instancia do `ApiClient` automaticamente nos testes, eliminando boilerplate.
+- **`request` fixture nativo:** Todos os testes usam o fixture `request` do proprio Playwright para chamadas HTTP, mantendo um unico modelo de teste sem dependencias externas.
 
 ### Cobertura de Cenarios
 
@@ -102,8 +97,7 @@ tests/e2e/
 └── support/
     ├── env.ts
     ├── hooks.ts
-    ├── world.ts
-    └── allure.ts
+    └── world.ts
 ```
 
 ### Decisoes Tecnicas
@@ -137,7 +131,6 @@ tests/e2e/
 
 ```text
 tests/load/
-├── api-load-test.js        # Script K6 basico
 └── api-load-test-500vu.js  # Teste de carga 500 VUs (7 endpoints)
 ```
 
@@ -301,7 +294,7 @@ Setup Node.js → npm install → Instalar K6 → npm run test:load:500vu
 
 | Camada | Tecnologia | Justificativa |
 |---|---|---|
-| Framework API | Playwright + Axios | Setup unico, flexibilidade HTTP |
+| Framework API | Playwright | Setup unico, fixture request nativo |
 | BDD/E2E | Cucumber + Playwright | Testes legiveis, automacao de browser |
 | Performance | K6 | Load testing a nivel de protocolo, JavaScript |
 | Relatorios | Allure | Unificado, visual, com historico |
@@ -316,7 +309,7 @@ Setup Node.js → npm install → Instalar K6 → npm run test:load:500vu
 - Um arquivo por recurso (`posts.spec.ts`, `users.spec.ts`)
 - Testes positivos e negativos para cada endpoint
 - Validar status code, headers e corpo da resposta
-- Usar fixtures para injecao de dependencias
+- Usar o fixture `request` nativo do Playwright para chamadas HTTP
 
 ### Testes E2E
 - Uma feature por fluxo de usuario

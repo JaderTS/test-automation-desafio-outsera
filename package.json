@@ -26,7 +26,6 @@
   "scripts": {
     "test:api": "playwright test --config=playwright-api.config.ts",
     "playwright:api:convert": "node scripts/playwright-api-to-allure.js",
-    "test:load": "node -e \"require('fs').mkdirSync('test-results', {recursive:true})\" && k6 run tests/load/api-load-test.js",
     "test:load:500vu": "node -e \"require('fs').mkdirSync('test-results', {recursive:true})\" && k6 run tests/load/api-load-test-500vu.js",
     "test:load:report": "node scripts/k6-report-analyzer.js",
     "test:load:full": "npm run test:load:500vu && npm run test:load:report",
@@ -60,7 +59,6 @@
     "typescript": "^5.6.0"
   },
   "dependencies": {
-    "axios": "^1.15.0",
     "dotenv": "^16.6.1"
   },
   "optionalDependencies": {

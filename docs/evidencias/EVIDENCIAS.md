@@ -16,7 +16,7 @@ O relatorio e atualizado automaticamente a cada push na branch `main` pelo pipel
 
 ## Testes de API
 
-**Ferramenta:** Playwright com Axios
+**Ferramenta:** Playwright
 **API testada:** JSONPlaceholder (https://jsonplaceholder.typicode.com)
 
 ### Endpoints Cobertos
