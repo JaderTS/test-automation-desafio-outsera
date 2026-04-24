@@ -216,7 +216,7 @@ Fluxos cobertos:
 Executa o teste de carga completo com 500 VUs e 7 endpoints:
 
 ```bash
-npm run test:load:500vu
+npm run test:load
 ```
 
 Apos a execucao, gere o relatorio HTML:
@@ -406,7 +406,7 @@ gh workflow run fast-tests-on-pr.yml
 | `npm run test:e2e` | Executa todos os testes E2E com Cucumber |
 | `npm run test:e2e:all` | Alias para test:e2e |
 | `npm run test:e2e:report` | Gera relatorio HTML dos testes E2E |
-| `npm run test:load:500vu` | Executa teste de carga 500 VUs (7 endpoints) |
+| `npm run test:load` | Executa teste de carga 500 VUs (7 endpoints) |
 | `npm run test:load:report` | Gera relatorio HTML do teste de carga |
 | `npm run test:load:full` | Executa teste 500 VUs e gera relatorio |
 | `npm run test:full` | Executa todos os testes (API + E2E + Carga) |

@@ -42,7 +42,7 @@ brew install k6
 ### Executar teste de carga (500 VUs)
 
 ```bash
-npm run test:load:500vu
+npm run test:load
 ```
 
 ### Gerar relatorio HTML
@@ -192,7 +192,7 @@ O script `k6-report-analyzer.js` gera:
 ### Executar teste capturando erros em arquivo
 
 ```bash
-npm run test:load:500vu 2>&1 | tee load-test-errors.log
+npm run test:load 2>&1 | tee load-test-errors.log
 ```
 Isso salva erros em `load-test-errors.log` para análise posterior.
 
