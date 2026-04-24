@@ -27,6 +27,13 @@ export let options = {
 
 const BASE_URL = 'https://jsonplaceholder.typicode.com';
 
+// Helper function para capturar erros
+function logErrorIfFailed(passed, endpoint, expectedStatus, res, additionalInfo = '') {
+  if (!passed) {
+    console.error(`[ERRO] ${endpoint} - Status: ${res.status} | Esperado: ${expectedStatus} | ${additionalInfo} | Duração: ${res.timings.duration}ms`);
+  }
+}
+
 export default function () {
   // GET /posts
   group('GET /posts', function () {
@@ -37,6 +44,7 @@ export default function () {
       'GET /posts tem dados': (r) => r.json().length > 0,
       'GET /posts tempo < 1000ms': (r) => r.timings.duration < 1000,
     });
+    logErrorIfFailed(passed, 'GET /posts', 200, res, `Dados: ${res.json().length} posts`);
     errorRate.add(!passed);
   });
 
@@ -52,6 +60,7 @@ export default function () {
       },
       'GET /posts?userId=1 tempo < 1000ms': (r) => r.timings.duration < 1000,
     });
+    logErrorIfFailed(passed, 'GET /posts?userId=1', 200, res, `Dados: ${res.json().length} posts`);
     errorRate.add(!passed);
   });
 
@@ -65,6 +74,7 @@ export default function () {
       'GET /posts/:id tem id correto': (r) => r.json().id === postId,
       'GET /posts/:id tempo < 1000ms': (r) => r.timings.duration < 1000,
     });
+    logErrorIfFailed(passed, `GET /posts/${postId}`, 200, res, `ID retornado: ${res.json().id}`);
     errorRate.add(!passed);
   });
 
@@ -83,6 +93,7 @@ export default function () {
       'POST /posts retorna id': (r) => r.json().id !== undefined,
       'POST /posts tempo < 1000ms': (r) => r.timings.duration < 1000,
     });
+    logErrorIfFailed(passed, 'POST /posts', 201, res, `Body: ${res.body}`);
     errorRate.add(!passed);
   });
 
@@ -95,6 +106,7 @@ export default function () {
       'GET /users tem dados': (r) => r.json().length > 0,
       'GET /users tempo < 1000ms': (r) => r.timings.duration < 1000,
     });
+    logErrorIfFailed(passed, 'GET /users', 200, res, `Dados: ${res.json().length} users`);
     errorRate.add(!passed);
   });
 
@@ -107,6 +119,7 @@ export default function () {
       'GET /comments tem dados': (r) => r.json().length > 0,
       'GET /comments tempo < 1000ms': (r) => r.timings.duration < 1000,
     });
+    logErrorIfFailed(passed, 'GET /comments', 200, res, `Dados: ${res.json().length} comments`);
     errorRate.add(!passed);
   });
 
@@ -119,6 +132,7 @@ export default function () {
       'GET /todos tem dados': (r) => r.json().length > 0,
       'GET /todos tempo < 1000ms': (r) => r.timings.duration < 1000,
     });
+    logErrorIfFailed(passed, 'GET /todos', 200, res, `Dados: ${res.json().length} todos`);
     errorRate.add(!passed);
   });
 

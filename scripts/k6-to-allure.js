@@ -36,7 +36,7 @@ try {
   // Extract check results from metrics (handleSummary format)
   const checksMetric = metrics.checks || {};
   const passedChecks = checksMetric.values ? checksMetric.values.passes || 0 : 0;
-  const failedChecks = checksMetric.values ? checksMetric.values.fails || 0 : 0;
+  const failedChecksCount = checksMetric.values ? checksMetric.values.fails || 0 : 0;
 
   // Extract HTTP metrics
   const httpReqs = metrics.http_reqs ? (metrics.http_reqs.values.count || 0) : 0;
@@ -63,18 +63,28 @@ try {
     extractChecks(results.root_group);
   }
 
-  const status = failedChecks === 0 ? 'passed' : 'failed';
+  const status = failedChecksCount === 0 ? 'passed' : 'failed';
 
   // Create steps from individual checks
   const steps = checks.map(function (check, idx) {
-    return {
+    const stepStatus = check.fails === 0 ? 'passed' : 'failed';
+    const step = {
       name: check.name + ' (' + check.passes + ' passed, ' + check.fails + ' failed)',
-      status: check.fails === 0 ? 'passed' : 'failed',
+      status: stepStatus,
       stage: 'finished',
       start: startTime + idx * 100,
       stop: startTime + idx * 100 + 100,
       duration: 100,
     };
+    
+    if (stepStatus === 'failed') {
+      step.statusDetails = {
+        message: `${check.fails} falhas detectadas`,
+        trace: `Passagens: ${check.passes}\nFalhas: ${check.fails}\nTaxa de falha: ${((check.fails / (check.passes + check.fails)) * 100).toFixed(2)}%`
+      };
+    }
+    
+    return step;
   });
 
   // Add HTTP metrics step
@@ -90,12 +100,22 @@ try {
   const description = [
     'K6 Load Test Results:',
     '- Passed Checks: ' + passedChecks,
-    '- Failed Checks: ' + failedChecks,
+    '- Failed Checks: ' + failedChecksCount,
     '- Total HTTP Requests: ' + httpReqs,
     '- HTTP Failure Rate: ' + (httpReqFailedRate * 100).toFixed(2) + '%',
     '- Avg Duration: ' + (httpDuration.avg || 0).toFixed(2) + 'ms',
     '- P95 Duration: ' + (httpDuration['p(95)'] || 0).toFixed(2) + 'ms',
   ].join('\n');
+
+  const failedChecksDetail = checks.filter(c => c.fails > 0);
+  const failedEndpointsDetail = failedChecksDetail
+    .map(c => `• ${c.name}: ${c.fails} falhas (${c.passes} passagens)`)
+    .join('\n');
+
+  let enhancedDescription = description;
+  if (failedEndpointsDetail) {
+    enhancedDescription += '\n\n**Endpoints com Falhas:**\n' + failedEndpointsDetail;
+  }
 
   const allureResult = {
     uuid: 'k6-load-test-0',
@@ -107,7 +127,11 @@ try {
     start: startTime,
     stop: startTime + 1000,
     duration: 1000,
-    description: description,
+    description: enhancedDescription,
+    statusDetails: failedChecksDetail.length > 0 ? {
+      message: `${failedChecksDetail.length} endpoint(s) com falhas`,
+      trace: failedEndpointsDetail
+    } : null,
     labels: [
       { name: 'suite', value: 'Load Tests' },
       { name: 'type', value: 'load' },
@@ -123,7 +147,7 @@ try {
 
   console.log(`Convertido K6 Load Test para Allure`);
   console.log(`   - Passed: ${passedChecks}`);
-  console.log(`   - Failed: ${failedChecks}`);
+  console.log(`   - Failed: ${failedChecksCount}`);
   console.log(`   - Total Requests: ${httpReqs}`);
 } catch (error) {
   console.error(`Erro ao converter K6: ${error.message}`);

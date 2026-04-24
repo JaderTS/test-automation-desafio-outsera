@@ -90,6 +90,47 @@ npm run test:load:full
 | `http_req_failed` | < 1% | Taxa de falha HTTP abaixo de 1% |
 | `errors` (custom) | < 1% | Taxa de checks falhados abaixo de 1% |
 
+## Captura de Erros
+
+Os testes implementam captura centralizada de erros com a função `logErrorIfFailed()` em todos os 7 endpoints.
+
+### Formato de Log
+
+Quando um check falha, o seguinte é registrado:
+
+```json
+[ERRO] GET /users - Status: 500 | Esperado: 200 | Dados: 0 users | Duração: 1250ms`
+```
+
+**Componentes:**
+- **Endpoint:** GET /users
+- **Status retornado:** 500
+- **Status esperado:** 200
+- **Contexto:** Dados: 0 users (específico por endpoint)
+- **Duração:** Tempo de execução em ms
+
+### Endpoints com Captura
+
+Todos os 7 endpoints possuem captura:
+
+| Endpoint | Contexto Capturado |
+|---|---|
+| GET /posts | Número de posts retornados |
+| GET /posts?userId=1 | Número de posts do usuário |
+| GET /posts/:id | ID retornado vs esperado |
+| POST /posts | Body completo da resposta |
+| GET /users | Número de usuários retornados |
+| GET /comments | Número de comentários retornados |
+| GET /todos | Número de TODOs retornados |
+
+### Como Interpretar Logs de Erro
+
+Durante a execução, erros aparecem no console:
+
+```bash
+[ERRO] GET /posts - Status: 200 | Esperado: 200 | Dados: 0 posts | Duração: 1050ms
+                    ↑ status ok   ↑ esperado      ↑ problema: sem dados!
+```
 ## Metricas Rastreadas
 
 ### Metricas Globais
@@ -105,6 +146,22 @@ Cada endpoint possui uma metrica custom (`Trend`) que rastreia:
 - Media (avg)
 - P90, P95, P99
 - Maximo (max)
+
+### Metricas de Erro
+
+Cada erro capturado contém:
+- **Endpoint:** Nome da rota testada
+- **Status HTTP:** Código retornado vs esperado
+- **Contexto:** Validação que falhou (dados, ID, etc)
+- **Duração:** Tempo em milissegundos
+
+**Exemplo de saída em caso de falha:**
+
+```json
+[ERRO] GET /users - Status: 500 | Esperado: 200 | Dados: 0 users | Duração: 1250ms
+[ERRO] POST /posts - Status: 201 | Esperado: 201 | Body: {...} | Duração: 850ms
+```
+Todos os erros são consolidados no resumo final gerado pelo `handleSummary()`.
 
 ## Relatorio de Analise
 
@@ -130,9 +187,34 @@ O script `k6-report-analyzer.js` gera:
 | P99 de endpoint > 1000ms | Alta |
 | Latencia maxima > 5000ms | Media |
 
+## Troubleshooting
+
+### Executar teste capturando erros em arquivo
+
+```bash
+npm run test:load:500vu 2>&1 | tee load-test-errors.log
+```
+Isso salva erros em `load-test-errors.log` para análise posterior.
+
+# Análise de Erros - Load Test Errors Log
+
+Salve erros em `load-test-errors.log` para análise posterior.
+
+## Interpretar erros comuns
+
+| Erro | Causa | Solução |
+|------|-------|--------|
+| Status: 503 \| Esperado: 200 | API sobrecarregada | Reduzir VUs ou aguardar recuperação |
+| Dados: 0 posts \| Duração: 185068s | Timeout na resposta | Verificar latência base ou limite de conexões |
+| Status: 500 \| Expected: 201 | Erro do servidor | Verificar logs da API ou dados de entrada |
+| [ERRO] em muitos endpoints | Falha crítica | Verificar conectividade e health da API |
+
 ## Notas Importantes
 
 - O teste e executado **diariamente** pelo workflow `load-tests-scheduled.yml` (3 PM UTC) e tambem pode ser disparado manualmente
 - O script nao interfere nos testes existentes (`api-load-test.js`)
 - Os resultados sao salvos em `test-results/` (diretorio ja no `.gitignore`)
 - A API JSONPlaceholder e publica e pode ter variacao de latencia conforme carga externa
+- Todos os endpoints implementam captura de erro com `logErrorIfFailed()` para melhor observabilidade
+- Logs de erro aparecem em tempo real durante execução (útil para debug de falhas)
+- Os erros são consolidados no `allure-results/` via script `scripts/k6-to-allure.js`
