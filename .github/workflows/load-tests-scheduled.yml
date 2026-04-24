@@ -35,7 +35,7 @@ jobs:
 
     # Load Tests
     - name: Executar Load Tests (500 VUs)
-      run: npm run test:load:500vu
+      run: npm run test:load
       continue-on-error: true
 
     - name: Converter K6 para Allure

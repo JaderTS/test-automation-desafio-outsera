@@ -7,7 +7,7 @@ const REPORT_PATH = './test-results/load-test-report.html';
 function loadResults() {
   if (!fs.existsSync(RESULTS_PATH)) {
     console.error(`Arquivo de resultados nao encontrado: ${RESULTS_PATH}`);
-    console.error('Execute primeiro: npm run test:load:500vu');
+    console.error('Execute primeiro: npm run test:load');
     process.exit(1);
   }
 
