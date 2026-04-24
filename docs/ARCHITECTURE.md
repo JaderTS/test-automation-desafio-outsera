@@ -159,7 +159,7 @@ tests/load/
 
 ### Execucao
 
-- **Localmente:** `npm run test:load:500vu`
+- **Localmente:** `npm run test:load`
 - **Agendada:** Workflow `load-tests-scheduled.yml` dispara diariamente as 3 PM UTC
 - **Com relatorio HTML:** `npm run test:load:full`
 
@@ -251,7 +251,7 @@ Setup Node.js → npm install → Playwright browsers → npm run test:e2e
 ### Load Tests Scheduled
 
 ```text
-Setup Node.js → npm install → Instalar K6 → npm run test:load:500vu
+Setup Node.js → npm install → Instalar K6 → npm run test:load
   → npm run k6:convert → npm run test:allure:generate
   → Deploy em /load-tests/ no GitHub Pages
 ```
