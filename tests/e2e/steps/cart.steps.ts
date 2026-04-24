@@ -47,12 +47,3 @@ Then('o carrinho deve exibir {int} itens', async function (this: CustomWorld, qu
   await expect(this.inventoryPage.cartBadge()).toHaveText(String(quantidade));
 });
 
-When('ele realiza logout', async function (this: CustomWorld) {
-  await this.inventoryPage.openMenu();
-  await this.inventoryPage.logout();
-});
-
-Then('deve retornar para a tela de login', async function (this: CustomWorld) {
-  await expect(this.page).toHaveURL(/saucedemo/);
-  await expect(this.loginPage.usernameField()).toBeVisible();
-});

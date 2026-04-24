@@ -1,14 +1,10 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
-import { LoginPage } from '../pages/LoginPage';
-import { InventoryPage } from '../pages/InventoryPage';
 import { CustomWorld } from '../support/world';
 import { env } from '../support/env';
 
 Given('que o usuário acessa a página de login', async function (this: CustomWorld) {
-  this.loginPage = new LoginPage(this.page);
-  this.inventoryPage = new InventoryPage(this.page);
-  await this.loginPage.open();
+  await this.loginPage.open(env.baseUrl);
 });
 
 When('ele preenche credenciais válidas', async function (this: CustomWorld) {
@@ -41,4 +37,14 @@ Then('deve ser redirecionado para a página de produtos', async function (this: 
 Then('deve visualizar a mensagem de erro contendo {string}', async function (this: CustomWorld, mensagem: string) {
   await expect(this.loginPage.errorMessage()).toBeVisible();
   await expect(this.loginPage.errorMessage()).toContainText(mensagem);
+});
+
+When('ele realiza logout', async function (this: CustomWorld) {
+  await this.inventoryPage.openMenu();
+  await this.inventoryPage.logout();
+});
+
+Then('deve retornar para a tela de login', async function (this: CustomWorld) {
+  await expect(this.page).toHaveURL(/saucedemo/);
+  await expect(this.loginPage.usernameField()).toBeVisible();
 });

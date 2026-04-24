@@ -1,11 +1,10 @@
 import { Page } from '@playwright/test';
-import { env } from '../support/env';
 
 export class LoginPage {
   constructor(private page: Page) {}
 
-  async open() {
-    await this.page.goto(env.baseUrl);
+  async open(url: string) {
+    await this.page.goto(url);
   }
 
   async fillUsername(username: string) {
