@@ -1,7 +1,8 @@
 import { Before, After } from '@cucumber/cucumber';
 import { chromium } from '@playwright/test';
+import * as fs from 'fs';
+import * as path from 'path';
 import { CustomWorld } from './world';
-import { AllureSupport } from '../support/allure';
 import { env } from '../support/env';
 import { LoginPage } from '../pages/LoginPage';
 import { InventoryPage } from '../pages/InventoryPage';
@@ -22,7 +23,11 @@ Before(async function (this: CustomWorld) {
 After(async function (this: CustomWorld, scenario) {
   if (scenario.result?.status === 'FAILED') {
     const screenshotName = scenario.pickle.name.replace(/\s+/g, '_');
-    await AllureSupport.captureScreenshot(this.page, screenshotName);
+    const screenshotPath = path.join('allure-results', `${screenshotName}.png`);
+    if (!fs.existsSync('allure-results')) {
+      fs.mkdirSync('allure-results', { recursive: true });
+    }
+    await this.page.screenshot({ path: screenshotPath });
   }
 
   await this.context.close();
