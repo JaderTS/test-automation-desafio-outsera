@@ -63,10 +63,12 @@ O relatorio e atualizado automaticamente a cada push na branch `main` pelo pipel
 - Remover produto da listagem
 - Adicionar multiplos produtos ao carrinho
 
-**Checkout (3 cenarios):**
+**Checkout (5 cenarios):**
 - Checkout com sucesso (fluxo completo)
-- Checkout com nome vazio (validacao de erro)
-- Checkout com CEP vazio (validacao de erro)
+- Checkout sem primeiro nome (validacao de erro)
+- Checkout sem sobrenome (validacao de erro)
+- Checkout sem CEP (validacao de erro)
+- Checkout sem nenhum campo (validacao de erro)
 
 ### Padroes Utilizados
 
@@ -85,21 +87,28 @@ O relatorio e atualizado automaticamente a cada push na branch `main` pelo pipel
 ### Configuracao do Teste
 
 - Usuarios simultaneos: ate 500
-- Duracao total: aproximadamente 5 minutos e 30 segundos
-- Endpoints testados: GET /posts e POST /posts
+- Duracao total: aproximadamente 5 minutos (1min ramp-up + 3min sustentacao + 1min ramp-down)
+- Endpoints testados: GET /posts, GET /posts?userId=1, GET /posts/:id, POST /posts, GET /users, GET /comments, GET /todos
 
 ### Thresholds
 
 | Metrica | Limite |
 |---|---|
 | Tempo de resposta (p95) | Abaixo de 500ms |
-| Taxa de erro HTTP | Abaixo de 0.1% |
+| Tempo de resposta (p99) | Abaixo de 1000ms |
+| Taxa de erro HTTP | Abaixo de 1% |
+| Taxa de erro customizada | Abaixo de 1% |
 
 ### Checks
 
-- GET /posts retorna status 200
-- GET /posts responde em menos de 500ms
-- POST /posts retorna status 201
+- GET /posts retorna status 200 e tem dados
+- GET /posts?userId=1 retorna status 200 e filtra por userId corretamente
+- GET /posts/:id retorna status 200 e ID correto
+- POST /posts retorna status 201 e retorna ID gerado
+- GET /users retorna status 200 e tem dados
+- GET /comments retorna status 200 e tem dados
+- GET /todos retorna status 200 e tem dados
+- Todos os endpoints respondem em menos de 1000ms
 
 ---
 
