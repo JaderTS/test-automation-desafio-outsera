@@ -1,11 +1,25 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "K6 Load Test Results:
-- Passed Checks: 2111423
-- Failed Checks: 1
-- Total HTTP Requests: 703808
-- HTTP Failure Rate: 0.00%
-- Avg Duration: 26.84ms
-- P95 Duration: 53.60ms
+- Passed Checks: 900578
+- Failed Checks: 2891825
+- Total HTTP Requests: 1746105
+- HTTP Failure Rate: 82.81%
+- Avg Duration: 30.02ms
+- P95 Duration: 71.16ms
 
 **Endpoints com Falhas:**
-• GET /comments tempo < 1000ms: 1 falhas (100543 passagens)","1000","K6 Load Test","","2026-05-10","failed","2026-05-10","","Load Tests","",""
+• GET /posts status 200: 1445808 falhas (42941 passagens)
+• GET /posts tem dados: 1445808 falhas (42941 passagens)
+• GET /posts?userId=1 status 200: 23 falhas (42918 passagens)
+• GET /posts?userId=1 retorna posts do user 1: 23 falhas (42918 passagens)
+• GET /posts?userId=1 tempo < 1000ms: 1 falhas (42917 passagens)
+• GET /posts/:id status 200: 15 falhas (42903 passagens)
+• GET /posts/:id tem id correto: 15 falhas (42903 passagens)
+• POST /posts status 201: 13 falhas (42890 passagens)
+• POST /posts retorna id: 13 falhas (42890 passagens)
+• GET /users status 200: 32 falhas (42858 passagens)
+• GET /users tem dados: 32 falhas (42858 passagens)
+• GET /comments status 200: 12 falhas (42846 passagens)
+• GET /comments tem dados: 12 falhas (42846 passagens)
+• GET /todos status 200: 9 falhas (42837 passagens)
+• GET /todos tem dados: 9 falhas (42837 passagens)","1000","K6 Load Test","","2026-05-11","failed","2026-05-11","","Load Tests","",""
