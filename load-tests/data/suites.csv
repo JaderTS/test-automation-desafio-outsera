@@ -1,31 +1,14 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "K6 Load Test Results:
-- Passed Checks: 2035997
-- Failed Checks: 1973
-- Total HTTP Requests: 679333
+- Passed Checks: 2053985
+- Failed Checks: 4
+- Total HTTP Requests: 684663
 - HTTP Failure Rate: 0.00%
-- Avg Duration: 33.77ms
-- P95 Duration: 34.62ms
+- Avg Duration: 31.59ms
+- P95 Duration: 88.21ms
 
 **Endpoints com Falhas:**
-• GET /posts status 200: 6 falhas (97060 passagens)
-• GET /posts tem dados: 6 falhas (97060 passagens)
-• GET /posts tempo < 1000ms: 294 falhas (96766 passagens)
-• GET /posts?userId=1 status 200: 5 falhas (97052 passagens)
-• GET /posts?userId=1 retorna posts do user 1: 5 falhas (97052 passagens)
-• GET /posts?userId=1 tempo < 1000ms: 274 falhas (96778 passagens)
-• GET /posts/:id status 200: 4 falhas (97047 passagens)
-• GET /posts/:id tem id correto: 4 falhas (97047 passagens)
-• GET /posts/:id tempo < 1000ms: 266 falhas (96781 passagens)
-• POST /posts status 201: 2 falhas (97044 passagens)
-• POST /posts retorna id: 2 falhas (97044 passagens)
-• POST /posts tempo < 1000ms: 297 falhas (96747 passagens)
-• GET /users status 200: 5 falhas (97038 passagens)
-• GET /users tem dados: 5 falhas (97038 passagens)
-• GET /users tempo < 1000ms: 262 falhas (96776 passagens)
-• GET /comments status 200: 4 falhas (97033 passagens)
-• GET /comments tem dados: 4 falhas (97033 passagens)
-• GET /comments tempo < 1000ms: 274 falhas (96759 passagens)
-• GET /todos status 200: 3 falhas (97030 passagens)
-• GET /todos tem dados: 3 falhas (97030 passagens)
-• GET /todos tempo < 1000ms: 248 falhas (96782 passagens)","1000","K6 Load Test","","2026-06-01","failed","2026-06-01","","Load Tests","",""
+• GET /posts tempo < 1000ms: 1 falhas (97808 passagens)
+• GET /users tempo < 1000ms: 1 falhas (97808 passagens)
+• GET /comments tempo < 1000ms: 1 falhas (97808 passagens)
+• GET /todos tempo < 1000ms: 1 falhas (97808 passagens)","1000","K6 Load Test","","2026-06-02","failed","2026-06-02","","Load Tests","",""
