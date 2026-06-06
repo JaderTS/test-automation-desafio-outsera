@@ -1,19 +1,25 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "K6 Load Test Results:
-- Passed Checks: 2220399
-- Failed Checks: 14
-- Total HTTP Requests: 740138
+- Passed Checks: 2054971
+- Failed Checks: 459
+- Total HTTP Requests: 685145
 - HTTP Failure Rate: 0.00%
-- Avg Duration: 18.55ms
-- P95 Duration: 30.94ms
+- Avg Duration: 31.68ms
+- P95 Duration: 53.98ms
 
 **Endpoints com Falhas:**
-• GET /posts tempo < 1000ms: 1 falhas (105733 passagens)
-• GET /posts?userId=1 tempo < 1000ms: 1 falhas (105733 passagens)
-• GET /posts/:id tempo < 1000ms: 2 falhas (105732 passagens)
-• POST /posts tempo < 1000ms: 1 falhas (105733 passagens)
-• GET /users tempo < 1000ms: 3 falhas (105731 passagens)
-• GET /comments tempo < 1000ms: 2 falhas (105732 passagens)
-• GET /todos status 200: 1 falhas (105733 passagens)
-• GET /todos tem dados: 1 falhas (105733 passagens)
-• GET /todos tempo < 1000ms: 2 falhas (105731 passagens)","1000","K6 Load Test","","2026-06-05","failed","2026-06-05","","Load Tests","",""
+• GET /posts status 200: 2 falhas (97879 passagens)
+• GET /posts tem dados: 2 falhas (97879 passagens)
+• GET /posts tempo < 1000ms: 73 falhas (97806 passagens)
+• GET /posts?userId=1 tempo < 1000ms: 60 falhas (97819 passagens)
+• GET /posts/:id status 200: 1 falhas (97877 passagens)
+• GET /posts/:id tem id correto: 1 falhas (97877 passagens)
+• GET /posts/:id tempo < 1000ms: 62 falhas (97815 passagens)
+• POST /posts tempo < 1000ms: 57 falhas (97820 passagens)
+• GET /users tempo < 1000ms: 58 falhas (97819 passagens)
+• GET /comments status 200: 1 falhas (97876 passagens)
+• GET /comments tem dados: 1 falhas (97876 passagens)
+• GET /comments tempo < 1000ms: 74 falhas (97802 passagens)
+• GET /todos status 200: 1 falhas (97875 passagens)
+• GET /todos tem dados: 1 falhas (97875 passagens)
+• GET /todos tempo < 1000ms: 65 falhas (97810 passagens)","1000","K6 Load Test","","2026-06-06","failed","2026-06-06","","Load Tests","",""
