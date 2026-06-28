@@ -1,35 +1,37 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class LoginPage {
-  constructor(private page: Page) {}
+  readonly usernameInput: Locator;
+  readonly passwordInput: Locator;
+  readonly loginButton: Locator;
+  readonly errorMessage: Locator;
+
+  constructor(private page: Page) {
+    this.usernameInput = page.locator('[data-test="username"]');
+    this.passwordInput = page.locator('[data-test="password"]');
+    this.loginButton = page.locator('[data-test="login-button"]');
+    this.errorMessage = page.locator('[data-test="error"]');
+  }
 
   async open(url: string) {
     await this.page.goto(url);
   }
 
   async fillUsername(username: string) {
-    await this.page.locator('[data-test="username"]').fill(username);
+    await this.usernameInput.fill(username);
   }
 
   async fillPassword(password: string) {
-    await this.page.locator('[data-test="password"]').fill(password);
+    await this.passwordInput.fill(password);
   }
 
   async clickLogin() {
-    await this.page.locator('[data-test="login-button"]').click();
+    await this.loginButton.click();
   }
 
   async login(username: string, password: string) {
     await this.fillUsername(username);
     await this.fillPassword(password);
     await this.clickLogin();
-  }
-
-  errorMessage() {
-    return this.page.locator('[data-test="error"]');
-  }
-
-  usernameField() {
-    return this.page.locator('[data-test="username"]');
   }
 }

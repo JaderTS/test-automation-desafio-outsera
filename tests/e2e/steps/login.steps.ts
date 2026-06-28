@@ -3,48 +3,48 @@ import { expect } from '@playwright/test';
 import { CustomWorld } from '../support/world';
 import { env } from '../support/env';
 
-Given('que o usuário acessa a página de login', async function (this: CustomWorld) {
+Given('the user accesses the login page', async function (this: CustomWorld) {
   await this.loginPage.open(env.baseUrl);
 });
 
-When('ele preenche credenciais válidas', async function (this: CustomWorld) {
+When('they enter valid credentials', async function (this: CustomWorld) {
   await this.loginPage.login(env.username, env.password);
 });
 
-When('ele tenta login com {string}', async function (this: CustomWorld, tipo: string) {
+When('they try to login with {string}', async function (this: CustomWorld, type: string) {
   const actions: Record<string, () => Promise<void>> = {
-    'senha incorreta': () => this.loginPage.login(env.username, env.invalidPassword),
-    'usuario inexistente': () => this.loginPage.login(env.invalidUser, env.password),
-    'usuario vazio': async () => {
+    'wrong password': () => this.loginPage.login(env.username, env.invalidPassword),
+    'nonexistent user': () => this.loginPage.login(env.invalidUser, env.password),
+    'empty username': async () => {
       await this.loginPage.fillPassword(env.password);
       await this.loginPage.clickLogin();
     },
-    'senha vazia': async () => {
+    'empty password': async () => {
       await this.loginPage.fillUsername(env.username);
       await this.loginPage.clickLogin();
     },
   };
-  const action = actions[tipo];
-  if (!action) throw new Error(`Tipo de login não suportado: ${tipo}`);
+  const action = actions[type];
+  if (!action) throw new Error(`Unsupported login type: ${type}`);
   await action();
 });
 
-Then('deve ser redirecionado para a página de produtos', async function (this: CustomWorld) {
+Then('they should be redirected to the products page', async function (this: CustomWorld) {
   await expect(this.page).toHaveURL(/inventory/);
-  await expect(this.inventoryPage.title()).toHaveText('Products');
+  await expect(this.inventoryPage.title).toHaveText('Products');
 });
 
-Then('deve visualizar a mensagem de erro contendo {string}', async function (this: CustomWorld, mensagem: string) {
-  await expect(this.loginPage.errorMessage()).toBeVisible();
-  await expect(this.loginPage.errorMessage()).toContainText(mensagem);
+Then('they should see an error message containing {string}', async function (this: CustomWorld, message: string) {
+  await expect(this.loginPage.errorMessage).toBeVisible();
+  await expect(this.loginPage.errorMessage).toContainText(message);
 });
 
-When('ele realiza logout', async function (this: CustomWorld) {
+When('they log out', async function (this: CustomWorld) {
   await this.inventoryPage.openMenu();
   await this.inventoryPage.logout();
 });
 
-Then('deve retornar para a tela de login', async function (this: CustomWorld) {
+Then('they should return to the login page', async function (this: CustomWorld) {
   await expect(this.page).toHaveURL(/saucedemo/);
-  await expect(this.loginPage.usernameField()).toBeVisible();
+  await expect(this.loginPage.usernameInput).toBeVisible();
 });

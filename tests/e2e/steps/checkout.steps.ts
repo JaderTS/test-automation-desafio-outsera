@@ -3,37 +3,37 @@ import { expect } from '@playwright/test';
 import { CustomWorld } from '../support/world';
 import { env } from '../support/env';
 
-Given('possui um produto no carrinho', async function (this: CustomWorld) {
+Given('they have a product in the cart', async function (this: CustomWorld) {
   await this.inventoryPage.addFirstProductToCart();
   await this.inventoryPage.openCart();
 });
 
-When('ele preenche os dados de checkout corretamente', async function (this: CustomWorld) {
+When('they fill in the checkout information correctly', async function (this: CustomWorld) {
   await this.cartPage.checkout();
   await this.checkoutPage.fillInformation(env.firstName, env.lastName, env.zipCode);
   await this.checkoutPage.continue();
 });
 
-When('finaliza a compra', async function (this: CustomWorld) {
+When('they complete the purchase', async function (this: CustomWorld) {
   await this.checkoutPage.finish();
 });
 
-Then('deve visualizar a mensagem de compra concluída', async function (this: CustomWorld) {
-  await expect(this.checkoutPage.successMessage()).toHaveText('Thank you for your order!');
+Then('they should see the order completion message', async function (this: CustomWorld) {
+  await expect(this.checkoutPage.successMessage).toHaveText('Thank you for your order!');
 });
 
-When('ele tenta finalizar o checkout omitindo {string}', async function (this: CustomWorld, campo: string) {
+When('they try to complete the checkout omitting {string}', async function (this: CustomWorld, field: string) {
   await this.cartPage.checkout();
-  const omit = (field: string) => campo === field || campo === 'todos os campos';
+  const omit = (f: string) => field === f || field === 'all fields';
   await this.checkoutPage.fillInformation(
-    omit('primeiro nome') ? '' : env.firstName,
-    omit('sobrenome') ? '' : env.lastName,
-    omit('CEP') ? '' : env.zipCode
+    omit('first name') ? '' : env.firstName,
+    omit('last name') ? '' : env.lastName,
+    omit('zip code') ? '' : env.zipCode
   );
   await this.checkoutPage.continue();
 });
 
-Then('deve visualizar a mensagem de erro no checkout contendo {string}', async function (this: CustomWorld, mensagem: string) {
-  await expect(this.checkoutPage.errorMessage()).toBeVisible();
-  await expect(this.checkoutPage.errorMessage()).toContainText(mensagem);
+Then('they should see an error message in the checkout containing {string}', async function (this: CustomWorld, message: string) {
+  await expect(this.checkoutPage.errorMessage).toBeVisible();
+  await expect(this.checkoutPage.errorMessage).toContainText(message);
 });

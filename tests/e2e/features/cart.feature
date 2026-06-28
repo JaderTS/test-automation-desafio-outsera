@@ -1,22 +1,22 @@
-Feature: Carrinho
+Feature: Cart
 
-  Scenario: Visualizar detalhes de um produto
-    Given que o usuário está autenticado no sistema
-    When ele acessa os detalhes de um produto
-    Then deve visualizar as informações do produto
+  Scenario: View product details
+    Given the user is authenticated in the system
+    When they access product details
+    Then they should see product information
 
-  Scenario: Adicionar um produto ao carrinho
-    Given que o usuário está autenticado no sistema
-    When ele adiciona um produto ao carrinho
-    Then o carrinho deve exibir 1 item
+  Scenario: Add a product to the cart
+    Given the user is authenticated in the system
+    When they add a product to the cart
+    Then the cart should display 1 item
 
-  Scenario: Remover produto da listagem
-    Given que o usuário está autenticado no sistema
-    And ele adicionou um produto ao carrinho
-    When ele remove o produto pela listagem
-    Then o carrinho não deve exibir itens
+  Scenario: Remove product from listing
+    Given the user is authenticated in the system
+    And they added a product to the cart
+    When they remove the product from listing
+    Then the cart should display no items
 
-  Scenario: Adicionar múltiplos produtos ao carrinho
-    Given que o usuário está autenticado no sistema
-    When ele adiciona 2 produtos ao carrinho
-    Then o carrinho deve exibir 2 itens
+  Scenario: Add multiple products to the cart
+    Given the user is authenticated in the system
+    When they add 2 products to the cart
+    Then the cart should display 2 items
