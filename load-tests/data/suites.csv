@@ -1,20 +1,12 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "K6 Load Test Results:
-- Passed Checks: 1999422
-- Failed Checks: 18
-- Total HTTP Requests: 666483
+- Passed Checks: 2078535
+- Failed Checks: 2
+- Total HTTP Requests: 692846
 - HTTP Failure Rate: 0.00%
-- Avg Duration: 36.45ms
-- P95 Duration: 93.46ms
+- Avg Duration: 30.38ms
+- P95 Duration: 87.12ms
 
 **Endpoints com Falhas:**
-• GET /posts status 200: 2 falhas (95213 passagens)
-• GET /posts tem dados: 2 falhas (95213 passagens)
-• GET /posts/:id status 200: 1 falhas (95212 passagens)
-• GET /posts/:id tem id correto: 1 falhas (95212 passagens)
-• GET /users status 200: 2 falhas (95210 passagens)
-• GET /users tem dados: 2 falhas (95210 passagens)
-• GET /comments status 200: 2 falhas (95208 passagens)
-• GET /comments tem dados: 2 falhas (95208 passagens)
-• GET /todos status 200: 2 falhas (95206 passagens)
-• GET /todos tem dados: 2 falhas (95206 passagens)","1000","K6 Load Test","","2026-07-08","failed","2026-07-08","","Load Tests","",""
+• GET /todos status 200: 1 falhas (98977 passagens)
+• GET /todos tem dados: 1 falhas (98977 passagens)","1000","K6 Load Test","","2026-07-09","failed","2026-07-09","","Load Tests","",""
