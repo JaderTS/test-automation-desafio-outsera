@@ -1,22 +1,24 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "K6 Load Test Results:
-- Passed Checks: 2267562
-- Failed Checks: 874
-- Total HTTP Requests: 756291
-- HTTP Failure Rate: 0.06%
-- Avg Duration: 15.58ms
-- P95 Duration: 36.43ms
+- Passed Checks: 2196547
+- Failed Checks: 529
+- Total HTTP Requests: 732446
+- HTTP Failure Rate: 0.04%
+- Avg Duration: 20.33ms
+- P95 Duration: 72.69ms
 
 **Endpoints com Falhas:**
-• GET /posts status 200: 59 falhas (108137 passagens)
-• GET /posts tem dados: 59 falhas (108137 passagens)
-• GET /posts?userId=1 status 200: 45 falhas (108092 passagens)
-• GET /posts?userId=1 retorna posts do user 1: 45 falhas (108092 passagens)
-• GET /posts/:id status 200: 59 falhas (108033 passagens)
-• GET /posts/:id tem id correto: 59 falhas (108033 passagens)
-• GET /users status 200: 98 falhas (107935 passagens)
-• GET /users tem dados: 98 falhas (107935 passagens)
-• GET /comments status 200: 70 falhas (107865 passagens)
-• GET /comments tem dados: 70 falhas (107865 passagens)
-• GET /todos status 200: 106 falhas (107759 passagens)
-• GET /todos tem dados: 106 falhas (107759 passagens)","1000","K6 Load Test","","2026-08-03","failed","2026-08-03","","Load Tests","",""
+• GET /posts status 200: 30 falhas (104705 passagens)
+• GET /posts tem dados: 30 falhas (104705 passagens)
+• GET /posts tempo < 1000ms: 3 falhas (104702 passagens)
+• GET /posts?userId=1 status 200: 55 falhas (104650 passagens)
+• GET /posts?userId=1 retorna posts do user 1: 55 falhas (104650 passagens)
+• GET /posts/:id status 200: 15 falhas (104635 passagens)
+• GET /posts/:id tem id correto: 15 falhas (104635 passagens)
+• POST /posts tempo < 1000ms: 2 falhas (104633 passagens)
+• GET /users status 200: 64 falhas (104571 passagens)
+• GET /users tem dados: 64 falhas (104571 passagens)
+• GET /comments status 200: 56 falhas (104515 passagens)
+• GET /comments tem dados: 56 falhas (104515 passagens)
+• GET /todos status 200: 42 falhas (104473 passagens)
+• GET /todos tem dados: 42 falhas (104473 passagens)","1000","K6 Load Test","","2026-08-04","failed","2026-08-04","","Load Tests","",""
