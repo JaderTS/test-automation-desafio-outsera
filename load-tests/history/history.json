@@ -1,1 +1,1 @@
-{"k6-load-test":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"fdd55c0114cde12","status":"failed","statusDetails":"6 endpoint(s) com falhas","time":{"start":1786561608276,"stop":1786561609276,"duration":1000}}]}}
+{"k6-load-test":{"statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1},"items":[{"uid":"4bd09e268e3636bf","status":"failed","statusDetails":"7 endpoint(s) com falhas","time":{"start":1786648080666,"stop":1786648081666,"duration":1000}}]}}
