@@ -1,8 +1,8 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "K6 Load Test Results:
-- Passed Checks: 2149224
+- Passed Checks: 2104662
 - Failed Checks: 0
-- Total HTTP Requests: 716408
+- Total HTTP Requests: 701554
 - HTTP Failure Rate: 0.00%
-- Avg Duration: 24.65ms
-- P95 Duration: 79.24ms","1000","K6 Load Test","","2026-09-12","passed","2026-09-12","","Load Tests","",""
+- Avg Duration: 28.05ms
+- P95 Duration: 48.34ms","1000","K6 Load Test","","2026-09-13","passed","2026-09-13","","Load Tests","",""
