@@ -1,11 +1,8 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
 "K6 Load Test Results:
-- Passed Checks: 2024093
-- Failed Checks: 160
-- Total HTTP Requests: 674751
+- Passed Checks: 2166591
+- Failed Checks: 0
+- Total HTTP Requests: 722197
 - HTTP Failure Rate: 0.00%
-- Avg Duration: 34.74ms
-- P95 Duration: 58.21ms
-
-**Endpoints com Falhas:**
-• GET /posts/:id tempo < 1000ms: 160 falhas (96233 passagens)","1000","K6 Load Test","","2026-11-01","failed","2026-11-01","","Load Tests","",""
+- Avg Duration: 22.51ms
+- P95 Duration: 38.22ms","1000","K6 Load Test","","2026-11-03","passed","2026-11-03","","Load Tests","",""
