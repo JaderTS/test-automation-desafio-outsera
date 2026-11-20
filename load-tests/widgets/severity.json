@@ -1,1 +1,1 @@
-[{"uid":"175ba6d0bc1ed978","name":"K6 Load Test","time":{"start":1795134390433,"stop":1795134391433,"duration":1000},"status":"failed","severity":"normal"}]
+[{"uid":"13da3f618871bf0a","name":"K6 Load Test","time":{"start":1795218567482,"stop":1795218568482,"duration":1000},"status":"passed","severity":"normal"}]
